@@ -1,0 +1,24 @@
+<div class="form-group {{form.htmlClass}} schema-form-select"
+     ng-class="{'has-error': form.disableErrorState !== true && hasError() && model.editMode, 'has-success': form.disableSuccessState !== true && hasSuccess(), 'has-feedback': form.feedback !== false}">
+  <label class="control-label {{form.labelHtmlClass}}" ng-show="showTitle()">
+    {{form.title}}
+  </label>
+  <select ng-model="$$value$$"
+          ng-model-options="form.ngModelOptions"
+          ng-disabled="form.readonly"
+          ng-show="model.editMode"
+          sf-changed="form"
+          class="form-control {{form.fieldHtmlClass}}"
+          schema-validate="form"
+          ng-options="item.value as item.name group by item.group for item in form.titleMap"
+          name="{{form.key.slice(-1)[0]}}">
+  </select>
+
+  <div ng-if="!form.filter" class="viewmode display" ng-show="!model.editMode">{{model[form.key.slice(-1)[0]]}}</div>
+  <div ng-if="form.filter" class="viewmode display" ng-show="!model.editMode">{{model[form.key.slice(-1)[0]] | useFilter:form.filter}}</div>
+
+  <!--<div class="help-block" sf-message="form.description"></div>-->
+  <small ng-show="model.editMode" ng-if="hasError()"
+        id="{{form.key.slice(-1)[0] + 'Status'}}"
+        class="error" sf-message="form.description"></small>
+</div>

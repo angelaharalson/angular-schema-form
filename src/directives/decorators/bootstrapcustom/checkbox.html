@@ -1,0 +1,19 @@
+<div id="sf_{{form.key.slice(-1)[0]}}" class="checkbox schema-form-checkbox {{form.htmlClass}}"
+     ng-class="{'has-error': form.disableErrorState !== true &&  hasError(), 'has-success': form.disableSuccessState !== true &&  hasSuccess()}">
+    <div class="custom_checkbox">
+        <input type="checkbox"
+               sf-changed="form"
+               ng-disabled="form.readonly || !model.editMode"
+               ng-model="$$value$$"
+               ng-model-options="form.ngModelOptions"
+               schema-validate="form"
+               class="{{form.fieldHtmlClass}}"
+               name="{{form.key.slice(-1)[0]}}"
+               id="{{form.key.slice(-1)[0]}}">
+        <label for="{{form.key.slice(-1)[0]}}"></label>
+    </div>
+    <label class="checkbox_label {{form.labelHtmlClass}}">
+      <span ng-bind-html="form.title"></span>
+    </label>
+    <div class="help-block" sf-message="form.description"></div>
+</div>
