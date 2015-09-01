@@ -1,0 +1,44 @@
+<div id="sf_{{form.key.slice(-1)[0]}}" class="form-group addrexxStreet schema-form-{{form.type}} {{form.htmlClass}}"
+     ng-class="{'has-error': form.disableErrorState !== true && hasError() && model.editMode, 'has-success': form.disableSuccessState !== true && hasSuccess(), 'has-feedback': form.feedback !== false }">
+  <label class="control-label {{form.labelHtmlClass}}" ng-class="{'sr-only': !showTitle(), 'error': form.disableErrorState !== true && hasError()}">{{form.title}}</label>
+
+  <div gs-autocomplete ng-show="form.key && model.editMode"
+              id="addrexxstr{{form.priority}}"
+              step="any"
+              placeholder="{{form.placeholder}}"
+              pause="400"
+              selected-object="SelectedStreet"
+              remote-url="https://secure.addrexx10.com/webservice5.asmx/STREET22"
+              has-error="form.hasError"
+              field-required="{{form.required}}"
+              field-required-class="has-error"
+              override-suggestions="true"
+              remote-url-data-field="items"
+              title-field="Address1"
+              zip-field="{{form.zipfield}}"
+              city-field="{{form.cityfield}}"
+              ng-model="$$value$$"
+              input-name="addrexxstr{{form.priority}}"
+              address-group="{{form.priority}}"
+              initial-value="model[form.key.slice(-1)[0]]"
+              maxlength="50"
+              minlength="1"
+              remote-url-response-formatter="ResponseFormatterStreet"
+              remote-url-request-formatter="RequestFormatterStreet"
+              input-class="form-control {{form.fieldHtmlClass}}">
+  </div>
+
+   <div ng-if="!form.filter" class="viewmode display" ng-show="!model.editMode">{{model[form.key.slice(-1)[0]]}}</div>
+   <div ng-if="form.filter" class="viewmode display" ng-show="!model.editMode">{{model[form.key.slice(-1)[0]] | useFilter:form.filter}}</div>
+
+  <span ng-if="form.feedback !== false"
+        class="form-control-feedback"
+        ng-class="evalInScope(form.feedback) || {'glyphicon': true, 'glyphicon-ok': hasSuccess(), 'glyphicon-remove': hasError() }"
+        aria-hidden="true"></span>
+
+        <small ng-show="model.editMode" ng-if="hasError()"
+              id="{{form.key.slice(-1)[0] + 'Status'}}"
+              class="error" sf-message="form.description"></small>
+
+        <!--<small class="help-block" sf-message="form.description"></small>-->
+</div>

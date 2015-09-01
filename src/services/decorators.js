@@ -47,6 +47,152 @@ angular.module('schemaForm').provider('schemaFormDecorators',
               return scope.form && scope.form.notitle !== true && scope.form.title;
             };
 
+                  /* Functions for ADDREXX */
+
+                  scope.ResponseFormatterZip = function(data) {
+                    var response = {items: []};
+                    data = data.replace("(", "");
+                    data = data.replace(")", "");
+                    data = data.replace(";", "");
+                    var tmpResponse = angular.fromJson(data);
+                    for(var i = 0; i < tmpResponse.length; i++)
+                    {
+                      var tmpObj = {};
+                      tmpObj.zip = tmpResponse[i].Address1.substring(0, 5);
+                      var tmpCityState = tmpResponse[i].Address1.substring(5, tmpResponse[i].Address1.length);
+                      var tmpArray = tmpCityState.split(",");
+                      tmpObj.city = tmpArray[0].trim();
+                      tmpObj.state = tmpArray[1].trim();
+                      tmpObj.citystate = tmpCityState.trim();
+                      response.items.push(tmpObj);
+                    }
+                    return response;
+                  };
+
+                  scope.SelectedZip = function(selected) {
+                      this.$parent.form.hasError = false;
+                      if(selected && selected.originalObject)
+                      {
+                        if(selected.originalObject.hasOwnProperty('zip'))
+                        {
+                          scope.$root.model[this.$parent.form.key[0]] = selected.originalObject.zip;
+                          scope.$root.model[this.$parent.form.statefield] = selected.originalObject.state;
+                          scope.$root.model[this.$parent.form.cityfield] = selected.originalObject.city;
+                        }
+                        else
+                        {
+                          scope.$root.model[this.$parent.form.key[0]] = selected.originalObject;
+                        }
+                          this.$parent.form.requiredError = false;
+                      }
+                      else
+                      {
+                        if(this.searchStr != '')
+                        {
+                          this.$parent.form.requiredError = false;
+                          scope.$root.model[this.$parent.form.key[0]] = this.searchStr;
+                        }
+                        else
+                        {
+                          if(this.$parent.form.required)
+                          {
+                            this.$parent.form.hasError = true;
+                            this.$parent.form.requiredError = true;
+                          }
+                          scope.$root.model[this.$parent.form.key[0]] = '';
+                        }
+                      }
+
+                      if(scope.$root.model[this.$parent.form.key[0]].length > 0 && scope.$root.model[this.$parent.form.key[0]].length < 5)
+                      {
+                        this.$parent.form.hasError = true;
+                        this.$parent.form.formatError = true;
+                      }
+                      else
+                      {
+                        this.$parent.form.formatError = false;
+                      }
+                  /*  console.log(this);
+                  console.log(this.$parent);
+                    console.log(selected);
+                    console.log(scope.$root);*/
+                  };
+
+                  scope.RequestFormatterStreet = function(str) {
+                     //var cityTmp = scope.$root.model[this.$parent.form.cityfield].split(" ");
+                     //var city = cityTmp[0];
+                     var city = scope.$root.model[this.$parent.form.cityfield];
+                     if(city && city.length > 6)
+                     {
+                       city = city.substring(0, 6);
+                       city = city.replace(' ', '+');
+                     }
+                     var zip = scope.$root.model[this.$parent.form.zipfield];
+                     var cityzip = city+zip;
+                     return {prefixText: str, contextKey: cityzip};
+                  };
+
+                  scope.ResponseFormatterStreet = function(data) {
+                    var response = {items: []};
+                    data = data.replace("(", "");
+                    data = data.replace(")", "");
+                    data = data.replace(";", "");
+                    //response.items = angular.fromJson(data);
+                    var tmpResponse = angular.fromJson(data);
+                    for(var i = 0; i < tmpResponse.length; i++)
+                    {
+                      if(tmpResponse[i].Address1.length > 5)
+                      {
+                        var tmpObj = {};
+                        var titleLength = tmpResponse[i].Address1.length-5;
+                        tmpObj.Address1 = tmpResponse[i].Address1.substring(0, titleLength);
+                      }
+                      else {
+                        var tmpObj = {};
+                        tmpObj.Address1 = '';
+                      }
+                      response.items.push(tmpObj);
+                    }
+                    return response;
+                  };
+
+                  scope.SelectedStreet = function(selected) {
+                    /*window.alert('You have selected ' + selected.title);*/
+
+                  /*  var tmpResponse = selected.title;
+                      var tmpObj = {};
+                      tmpObj.zip = tmpResponse.substring(0, 5);
+                      var tmpCityState = tmpResponse.substring(5, tmpResponse.length - 4);
+                      var tmpArray = tmpCityState.split(",");
+                      tmpObj.city = tmpArray[0];
+                      tmpObj.state = tmpArray[1];*/
+
+                      this.$parent.form.hasError = false;
+
+                      if(selected && selected.title)
+                      {
+                          scope.$root.model[this.$parent.form.key[0]] = selected.title;
+                          this.$parent.form.requiredError = false;
+                      }
+                      else
+                      {
+                        if(this.searchStr != '')
+                        {
+                          this.$parent.form.requiredError = false;
+                          scope.$root.model[this.$parent.form.key[0]] = this.searchStr;
+                        }
+                        else
+                        {
+                          if(this.$parent.form.required)
+                          {
+                            this.$parent.form.hasError = true;
+                            this.$parent.form.requiredError = true;
+                          }
+                          scope.$root.model[this.$parent.form.key[0]] = '';
+                        }
+                      }
+                  };
+
             scope.listToCheckboxValues = function(list) {
               var values = {};
               angular.forEach(list, function(v) {
