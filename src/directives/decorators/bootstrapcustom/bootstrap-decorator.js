@@ -27,6 +27,7 @@ angular.module('schemaForm').config(['schemaFormDecoratorsProvider', 'schemaForm
     radiobuttons: {template: base + 'radio-buttons.html', replace: false},
     help: {template: base + 'help.html', replace: false},
     'inputmask': {template: base + 'default-uimask.html', replace: false},
+    'userid': {template: base + 'default-userid.html', replace: false},
     'addrexxzip': {template: base + 'default-addrexxzip.html', replace: false},
     'addrexxstreet': {template: base + 'default-addrexxstreet.html', replace: false},
     'default': {template: base + 'default.html', replace: false}
@@ -49,6 +50,7 @@ angular.module('schemaForm').config(['schemaFormDecoratorsProvider', 'schemaForm
     radios: base + 'radios.html',
     'radios-inline': base + 'radios-inline.html',
     'inputmask': base + 'default-uimask.html',
+    'userid': base + 'default-userid.html',
     'addrexxzip': base + 'default-addrexxzip.html',
     'addrexxstreet': base + 'default-addrexxstreet.html',
     radiobuttons: base + 'radio-buttons.html',
@@ -89,6 +91,18 @@ angular.module('schemaForm').config(['schemaFormDecoratorsProvider', 'schemaForm
   };
 
   schemaFormProvider.defaults.string.unshift(addrexxstreet);
+
+  var userid = function(name, schema, options) {
+    if (schema.type === 'string' && (schema.custom === 'userid')) {
+      var f = schemaFormProvider.stdFormObj(name, schema, options);
+      f.key  = options.path;
+      f.type = 'userid';
+      options.lookup[sfPathProvider.stringify(options.path)] = f;
+      return f;
+    }
+  };
+
+  schemaFormProvider.defaults.string.unshift(userid);
 
 }]).directive('sfFieldset', function() {
   return {

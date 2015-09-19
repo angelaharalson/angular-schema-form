@@ -343,6 +343,7 @@ angular.module('schemaForm').provider('schemaFormDecorators',
 ['$compileProvider', 'sfPathProvider', function($compileProvider, sfPathProvider) {
   var defaultDecorator = '';
   var decorators = {};
+  var checkProfileHoldValue = '';
 
   // Map template after decorator and type.
   var templateUrl = function(name, form) {
@@ -387,6 +388,14 @@ angular.module('schemaForm').provider('schemaFormDecorators',
             scope.showTitle = function() {
               return scope.form && scope.form.notitle !== true && scope.form.title;
             };
+                  /* Functions for  userid */
+                  scope.ClearError = function(type){
+                    this.ngModel.$setValidity(type, true);
+                  };
+
+                  scope.CheckProfile = function(){
+                    scope.$root.CheckProfile(scope.$root.model[this.$parent.form.key[0]], this);
+                  };
 
                   /* Functions for ADDREXX */
 
