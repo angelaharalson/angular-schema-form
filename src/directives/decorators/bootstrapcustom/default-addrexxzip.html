@@ -8,7 +8,6 @@
               placeholder="{{form.placeholder}}"
               pause="400"
               selected-object="SelectedZip"
-              remote-url="https://secure.addrexx10.com/webservice5.asmx/ZIP?prefixText="
               has-error="form.hasError"
               field-required="{{form.required}}"
               field-required-class="has-error"
@@ -25,6 +24,7 @@
               initial-value="model[form.key.slice(-1)[0]]"
               maxlength="5"
               minlength="1"
+              remote-api-handler="ZipAPI"
               remote-url-response-formatter="ResponseFormatterZip"
               input-class="form-control {{form.fieldHtmlClass}}">
   </div>

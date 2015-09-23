@@ -8,7 +8,6 @@
               placeholder="{{form.placeholder}}"
               pause="400"
               selected-object="SelectedStreet"
-              remote-url="https://secure.addrexx10.com/webservice5.asmx/STREET22"
               has-error="form.hasError"
               field-required="{{form.required}}"
               field-required-class="has-error"
@@ -24,7 +23,7 @@
               maxlength="50"
               minlength="1"
               remote-url-response-formatter="ResponseFormatterStreet"
-              remote-url-request-formatter="RequestFormatterStreet"
+              remote-api-handler="StreetAPI"
               input-class="form-control {{form.fieldHtmlClass}}">
   </div>
 

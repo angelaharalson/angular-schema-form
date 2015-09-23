@@ -398,13 +398,13 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                   };
 
                   /* Functions for ADDREXX */
+                  scope.ZipAPI = function(str, timeoutPromise) {
+                     return $http.jsonp('https://secure.addrexx10.com/webservice5.asmx/ZIP?callback=JSON_CALLBACK&prefixText='+str, {q: str}, {timeout: timeoutPromise});
+                  };
 
                   scope.ResponseFormatterZip = function(data) {
                     var response = {items: []};
-                    data = data.replace("(", "");
-                    data = data.replace(")", "");
-                    data = data.replace(";", "");
-                    var tmpResponse = angular.fromJson(data);
+                    var tmpResponse = data;
                     for(var i = 0; i < tmpResponse.length; i++)
                     {
                       var tmpObj = {};
@@ -462,15 +462,9 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                       {
                         this.$parent.form.formatError = false;
                       }
-                  /*  console.log(this);
-                  console.log(this.$parent);
-                    console.log(selected);
-                    console.log(scope.$root);*/
                   };
 
-                  scope.RequestFormatterStreet = function(str) {
-                     //var cityTmp = scope.$root.model[this.$parent.form.cityfield].split(" ");
-                     //var city = cityTmp[0];
+                  scope.StreetAPI = function(str, timeoutPromise) {
                      var city = scope.$root.model[this.$parent.form.cityfield];
                      if(city && city.length > 6)
                      {
@@ -479,16 +473,12 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                      }
                      var zip = scope.$root.model[this.$parent.form.zipfield];
                      var cityzip = city+zip;
-                     return {prefixText: str, contextKey: cityzip};
+                     return $http.jsonp('https://secure.addrexx10.com/webservice5.asmx/STREET22?callback=JSON_CALLBACK&prefixText='+str+'&contextKey='+cityzip, {q: str}, {timeout: timeoutPromise});
                   };
 
                   scope.ResponseFormatterStreet = function(data) {
                     var response = {items: []};
-                    data = data.replace("(", "");
-                    data = data.replace(")", "");
-                    data = data.replace(";", "");
-                    //response.items = angular.fromJson(data);
-                    var tmpResponse = angular.fromJson(data);
+                    var tmpResponse = data;
                     for(var i = 0; i < tmpResponse.length; i++)
                     {
                       if(tmpResponse[i].Address1.length > 5)
@@ -507,15 +497,6 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                   };
 
                   scope.SelectedStreet = function(selected) {
-                    /*window.alert('You have selected ' + selected.title);*/
-
-                  /*  var tmpResponse = selected.title;
-                      var tmpObj = {};
-                      tmpObj.zip = tmpResponse.substring(0, 5);
-                      var tmpCityState = tmpResponse.substring(5, tmpResponse.length - 4);
-                      var tmpArray = tmpCityState.split(",");
-                      tmpObj.city = tmpArray[0];
-                      tmpObj.state = tmpArray[1];*/
 
                       this.$parent.form.hasError = false;
 
@@ -542,6 +523,7 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                         }
                       }
                   };
+
 
             scope.listToCheckboxValues = function(list) {
               var values = {};
