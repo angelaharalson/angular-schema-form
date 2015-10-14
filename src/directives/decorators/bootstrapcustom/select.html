@@ -3,7 +3,7 @@
   <label class="control-label {{form.labelHtmlClass}}" ng-show="showTitle()">
     {{form.title}}
   </label>
-  <select ng-model="$$value$$"
+  <!--<select ng-model="$$value$$"
           ng-model-options="form.ngModelOptions"
           ng-disabled="form.readonly"
           ng-show="model.editMode"
@@ -12,7 +12,27 @@
           schema-validate="form"
           ng-options="item.value as item.name group by item.group for item in form.titleMap"
           name="{{form.key.slice(-1)[0]}}">
-  </select>
+  </select>-->
+  <div class="custom_select_wrapper" ng-show="model.editMode">
+    <button type="button"
+            id="{{form.key.slice(-1)[0]}}"
+            name="{{form.key.slice(-1)[0]}}"
+            ng-model="$$value$$"
+            ng-model-options="form.ngModelOptions"
+            ng-disabled="form.readonly"
+            ng-show="model.editMode"
+            sf-changed="form"
+            class="form-control custom_select {{form.fieldHtmlClass}}"
+            schema-validate="form"
+            bs-options="item.value as item.name group by item.group for item in form.titleMap"
+            placeholder=""
+            data-trigger="{{form.selectTrigger}}"
+            bs-select
+            data-html="1" >
+            <span class='caret'></span>
+    </button>
+  </div>
+
 
   <div ng-if="!form.filter" class="viewmode display" ng-show="!model.editMode">{{model[form.key.slice(-1)[0]]}}</div>
   <div ng-if="form.filter" class="viewmode display" ng-show="!model.editMode">{{model[form.key.slice(-1)[0]] | useFilter:form.filter}}</div>
