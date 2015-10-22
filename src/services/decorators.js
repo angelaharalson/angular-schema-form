@@ -22,9 +22,9 @@ angular.module('schemaForm').provider('schemaFormDecorators',
 
   var createDirective = function(name) {
     $compileProvider.directive(name,
-      ['$parse', '$compile', '$http', '$templateCache', '$interpolate', '$q', 'sfErrorMessage',
+      ['$parse', '$compile', '$http', '$templateCache', '$interpolate', '$q', '$timeout', 'sfErrorMessage',
        'sfPath','sfSelect',
-      function($parse,  $compile,  $http,  $templateCache, $interpolate, $q, sfErrorMessage,
+      function($parse,  $compile,  $http,  $templateCache, $interpolate, $q, $timeout, sfErrorMessage,
                sfPath, sfSelect) {
 
         return {
@@ -78,49 +78,86 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                     return response;
                   };
 
+                  var unbindZipWatch = '';
                   scope.SelectedZip = function(selected) {
-                      this.$parent.form.hasError = false;
+
+                    var zipParentKey = this.$parent.form.key[0];
+                    var thisObj = this;
+                    var thisVal = '';
+
+                    $timeout(function() {
+                      if(unbindZipWatch != '')
+                      {
+                        unbindZipWatch();
+                      }
+
+                      thisObj.$parent.form.hasError = false;
                       if(selected && selected.originalObject)
                       {
                         if(selected.originalObject.hasOwnProperty('zip'))
                         {
-                          scope.$root.model[this.$parent.form.key[0]] = selected.originalObject.zip;
-                          scope.$root.model[this.$parent.form.statefield] = selected.originalObject.state;
-                          scope.$root.model[this.$parent.form.cityfield] = selected.originalObject.city;
+                            thisVal = selected.originalObject.zip;
+                            scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.originalObject.zip);
+                            scope.$root.SetFieldValue(thisObj.$parent.form.statefield, selected.originalObject.state);
+                            scope.$root.SetFieldValue(thisObj.$parent.form.cityfield, selected.originalObject.city);
+                            scope.$root.SetFieldValidity(thisObj.$parent.form.cityfield, 'tv4-302', true);
+                            scope.$root.SetFieldValidity(thisObj.$parent.form.statefield, 'tv4-302', true);
+                            //scope.$root.model[thisObj.$parent.form.key[0]] = selected.originalObject.zip;
+                            //scope.$root.model[thisObj.$parent.form.statefield] = selected.originalObject.state;
+                            //scope.$root.model[thisObj.$parent.form.cityfield] = selected.originalObject.city;
                         }
                         else
                         {
-                          scope.$root.model[this.$parent.form.key[0]] = selected.originalObject;
+                          thisVal = selected.originalObject;
+                          scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.originalObject);
+                          //scope.$root.model[thisObj.$parent.form.key[0]] = selected.originalObject;
                         }
-                          this.$parent.form.requiredError = false;
+                          thisObj.$parent.form.requiredError = false;
                       }
                       else
                       {
-                        if(this.searchStr != '')
+                        if(thisObj.searchStr != '')
                         {
-                          this.$parent.form.requiredError = false;
-                          scope.$root.model[this.$parent.form.key[0]] = this.searchStr;
+                          thisObj.$parent.form.requiredError = false;
+                          thisVal = thisObj.searchStr;
+                          scope.$root.SetFieldValue(thisObj.$parent.form.key[0], thisObj.searchStr);
+                          //scope.$root.model[thisObj.$parent.form.key[0]] = thisObj.searchStr;
                         }
                         else
                         {
-                          if(this.$parent.form.required)
+                          if(thisObj.$parent.form.required)
                           {
-                            this.$parent.form.hasError = true;
-                            this.$parent.form.requiredError = true;
+                            thisObj.$parent.form.hasError = true;
+                            thisObj.$parent.form.requiredError = true;
                           }
-                          scope.$root.model[this.$parent.form.key[0]] = '';
+                          //scope.$root.model[thisObj.$parent.form.key[0]] = '';
+                          thisVal = '';
+                          scope.$root.SetFieldValue(thisObj.$parent.form.key[0], '');
                         }
                       }
 
-                      if(scope.$root.model[this.$parent.form.key[0]].length > 0 && scope.$root.model[this.$parent.form.key[0]].length < 5)
+                      if(scope.$root.model[thisObj.$parent.form.key[0]].length > 0 && scope.$root.model[thisObj.$parent.form.key[0]].length < 5)
                       {
-                        this.$parent.form.hasError = true;
-                        this.$parent.form.formatError = true;
+                        thisObj.$parent.form.hasError = true;
+                        thisObj.$parent.form.formatError = true;
                       }
                       else
                       {
-                        this.$parent.form.formatError = false;
+                        thisObj.$parent.form.formatError = false;
                       }
+
+                      unbindZipWatch = scope.$watch(function(scope) { return scope.$root.model[zipParentKey] },
+                        function(newValue, oldValue) {
+                            if(newValue != oldValue)
+                            {
+                              thisObj.searchStr = newValue;
+                              thisObj.$parent.form.hasError = false;
+                              thisObj.$parent.form.requiredError = false;
+                              thisObj.$parent.form.formatError = false;
+                            }
+                        }
+                       );
+                     });
                   };
 
                   scope.StreetAPI = function(str, timeoutPromise) {
@@ -155,32 +192,57 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                     return response;
                   };
 
+                  var unbindStreetWatch = '';
                   scope.SelectedStreet = function(selected) {
 
-                      this.$parent.form.hasError = false;
+                    var streetParentKey = this.$parent.form.key[0];
+                    var thisObj = this;
 
-                      if(selected && selected.title)
+                    $timeout(function() {
+                      if(unbindStreetWatch != '')
                       {
-                          scope.$root.model[this.$parent.form.key[0]] = selected.title;
-                          this.$parent.form.requiredError = false;
+                        unbindStreetWatch();
                       }
-                      else
-                      {
-                        if(this.searchStr != '')
+                        thisObj.$parent.form.hasError = false;
+
+                        if(selected && selected.title)
                         {
-                          this.$parent.form.requiredError = false;
-                          scope.$root.model[this.$parent.form.key[0]] = this.searchStr;
+                            //scope.$root.model[thisObj.$parent.form.key[0]] = selected.title;
+                            scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.title);
+                            thisObj.$parent.form.requiredError = false;
                         }
                         else
                         {
-                          if(this.$parent.form.required)
+                          console.log(thisObj.searchStr);
+                          if(thisObj.searchStr != '')
                           {
-                            this.$parent.form.hasError = true;
-                            this.$parent.form.requiredError = true;
+                            thisObj.$parent.form.requiredError = false;
+                            scope.$root.SetFieldValue(thisObj.$parent.form.key[0], thisObj.searchStr);
+                            //scope.$root.model[thisObj.$parent.form.key[0]] = thisObj.searchStr;
                           }
-                          scope.$root.model[this.$parent.form.key[0]] = '';
+                          else
+                          {
+                            if(thisObj.$parent.form.required)
+                            {
+                              thisObj.$parent.form.hasError = true;
+                              thisObj.$parent.form.requiredError = true;
+                            }
+                            //scope.$root.model[thisObj.$parent.form.key[0]] = '';
+                            scope.$root.SetFieldValue(thisObj.$parent.form.key[0], '');
+                          }
                         }
-                      }
+
+                        unbindStreetWatch = scope.$watch(function(scope) { return scope.$root.model[streetParentKey] },
+                          function(newValue, oldValue) {
+                              if(newValue != oldValue)
+                              {
+                                thisObj.searchStr = newValue;
+                                thisObj.$parent.form.hasError = false;
+                                thisObj.$parent.form.requiredError = false;
+                              }
+                          }
+                         );
+                      });
                   };
 
 
