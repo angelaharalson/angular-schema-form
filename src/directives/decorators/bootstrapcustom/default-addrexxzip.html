@@ -1,6 +1,6 @@
 <div id="sf_{{form.key.slice(-1)[0]}}" class="form-group addrexxZip schema-form-{{form.type}} {{form.htmlClass}}"
-     ng-class="{'has-error': form.disableErrorState !== true && form.hasError && model.editMode, 'has-success': form.disableSuccessState !== true && !form.hasError, 'has-feedback': form.feedback !== false }">
-  <label class="control-label {{form.labelHtmlClass}}" ng-class="{'sr-only': !showTitle(), 'error': form.disableErrorState !== true && form.hasError}">{{form.title}}</label>
+     ng-class="{'has-error': form.disableErrorState !== true && hasError() && model.editMode, 'has-success': form.disableSuccessState !== true && !hasError(), 'has-feedback': form.feedback !== false }">
+  <label class="control-label {{form.labelHtmlClass}}" ng-class="{'sr-only': !showTitle(), 'error': form.disableErrorState !== true && hasError()}">{{form.title}}</label>
 
   <div gs-autocomplete ng-show="form.key && model.editMode"
               id="addrexxcode{{form.priority}}"
@@ -8,7 +8,6 @@
               placeholder="{{form.placeholder}}"
               pause="400"
               selected-object="SelectedZip"
-              has-error="form.hasError"
               field-required="{{form.required}}"
               field-required-class="has-error"
               override-suggestions="true"
@@ -24,6 +23,9 @@
               initial-value="model[form.key.slice(-1)[0]]"
               maxlength="5"
               minlength="1"
+              ng-minlength="5"
+              ng-maxlength="5"
+              schema-validate="form"
               remote-api-handler="ZipAPI"
               remote-url-response-formatter="ResponseFormatterZip"
               input-class="form-control {{form.fieldHtmlClass}}">
@@ -40,14 +42,6 @@
         <small ng-show="model.editMode" ng-if="hasError()"
               id="{{form.key.slice(-1)[0] + 'Status'}}"
               class="error" sf-message="form.description"></small>
-
-        <small ng-show="model.editMode" ng-if="form.requiredError"
-              id="{{form.key.slice(-1)[0] + 'Status'}}"
-              class="error">{{form.title}} is required.</small>
-
-        <small ng-show="model.editMode" ng-if="form.formatError"
-              id="{{form.key.slice(-1)[0] + 'Status'}}"
-              class="error">{{form.title}} should be 5 digits.</small>
 
         <!--<small class="help-block" sf-message="form.description"></small>-->
 </div>

@@ -421,84 +421,69 @@ angular.module('schemaForm').provider('schemaFormDecorators',
 
                   var unbindZipWatch = '';
                   scope.SelectedZip = function(selected) {
-
                     var zipParentKey = this.$parent.form.key[0];
                     var thisObj = this;
                     var thisVal = '';
 
-                    $timeout(function() {
                       if(unbindZipWatch != '')
                       {
                         unbindZipWatch();
                       }
 
-                      thisObj.$parent.form.hasError = false;
+
                       if(selected && selected.originalObject)
                       {
                         if(selected.originalObject.hasOwnProperty('zip'))
                         {
                             thisVal = selected.originalObject.zip;
-                            scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.originalObject.zip);
                             scope.$root.SetFieldValue(thisObj.$parent.form.statefield, selected.originalObject.state);
                             scope.$root.SetFieldValue(thisObj.$parent.form.cityfield, selected.originalObject.city);
-                            scope.$root.SetFieldValidity(thisObj.$parent.form.cityfield, 'tv4-302', true);
-                            scope.$root.SetFieldValidity(thisObj.$parent.form.statefield, 'tv4-302', true);
-                            //scope.$root.model[thisObj.$parent.form.key[0]] = selected.originalObject.zip;
-                            //scope.$root.model[thisObj.$parent.form.statefield] = selected.originalObject.state;
-                            //scope.$root.model[thisObj.$parent.form.cityfield] = selected.originalObject.city;
+                            scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.originalObject.zip);
                         }
                         else
                         {
                           thisVal = selected.originalObject;
                           scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.originalObject);
-                          //scope.$root.model[thisObj.$parent.form.key[0]] = selected.originalObject;
                         }
-                          thisObj.$parent.form.requiredError = false;
                       }
                       else
                       {
                         if(thisObj.searchStr != '')
                         {
-                          thisObj.$parent.form.requiredError = false;
                           thisVal = thisObj.searchStr;
                           scope.$root.SetFieldValue(thisObj.$parent.form.key[0], thisObj.searchStr);
-                          //scope.$root.model[thisObj.$parent.form.key[0]] = thisObj.searchStr;
                         }
                         else
                         {
-                          if(thisObj.$parent.form.required)
-                          {
-                            thisObj.$parent.form.hasError = true;
-                            thisObj.$parent.form.requiredError = true;
-                          }
-                          //scope.$root.model[thisObj.$parent.form.key[0]] = '';
                           thisVal = '';
                           scope.$root.SetFieldValue(thisObj.$parent.form.key[0], '');
                         }
                       }
 
-                      if(scope.$root.model[thisObj.$parent.form.key[0]].length > 0 && scope.$root.model[thisObj.$parent.form.key[0]].length < 5)
+                      if(thisObj.$parent.form.requiredGroup)
                       {
-                        thisObj.$parent.form.hasError = true;
-                        thisObj.$parent.form.formatError = true;
+                        $timeout(function (){scope.$root.valueChanged(thisVal, thisObj.$parent.form, thisObj.$parent.form.requiredGroup);}, 700);
+                      }
+
+                      if(thisVal.length > 0 && thisVal.length < 5)
+                      {
+                        $timeout(function (){scope.$broadcast('schemaForm.error.'+thisObj.$parent.form.key[0],'tv4-200',false);}, 1000);
                       }
                       else
                       {
-                        thisObj.$parent.form.formatError = false;
+                        $timeout(function (){scope.$broadcast('schemaForm.error.'+thisObj.$parent.form.key[0],'tv4-200',true);}, 1000);
                       }
 
-                      unbindZipWatch = scope.$watch(function(scope) { return scope.$root.model[zipParentKey] },
-                        function(newValue, oldValue) {
-                            if(newValue != oldValue)
-                            {
-                              thisObj.searchStr = newValue;
-                              thisObj.$parent.form.hasError = false;
-                              thisObj.$parent.form.requiredError = false;
-                              thisObj.$parent.form.formatError = false;
-                            }
-                        }
-                       );
-                     });
+                      $timeout(function() {
+                        unbindZipWatch = scope.$watch(function(scope) { return scope.$root.model[zipParentKey] },
+                          function(newValue, oldValue) {
+                              if(newValue != oldValue)
+                              {
+                                thisObj.searchStr = newValue;
+                              }
+                          }
+                         );
+                       });
                   };
 
                   scope.StreetAPI = function(str, timeoutPromise) {
@@ -538,48 +523,44 @@ angular.module('schemaForm').provider('schemaFormDecorators',
 
                     var streetParentKey = this.$parent.form.key[0];
                     var thisObj = this;
+                    var thisVal = '';
 
-                    $timeout(function() {
                       if(unbindStreetWatch != '')
                       {
                         unbindStreetWatch();
                       }
-                        thisObj.$parent.form.hasError = false;
 
                         if(selected && selected.title)
                         {
-                            //scope.$root.model[thisObj.$parent.form.key[0]] = selected.title;
+                            thisVal = selected.title;
                             scope.$root.SetFieldValue(thisObj.$parent.form.key[0], selected.title);
-                            thisObj.$parent.form.requiredError = false;
                         }
                         else
                         {
-                          console.log(thisObj.searchStr);
                           if(thisObj.searchStr != '')
                           {
-                            thisObj.$parent.form.requiredError = false;
+                            thisVal = thisObj.searchStr;
                             scope.$root.SetFieldValue(thisObj.$parent.form.key[0], thisObj.searchStr);
-                            //scope.$root.model[thisObj.$parent.form.key[0]] = thisObj.searchStr;
                           }
                           else
                           {
-                            if(thisObj.$parent.form.required)
-                            {
-                              thisObj.$parent.form.hasError = true;
-                              thisObj.$parent.form.requiredError = true;
-                            }
-                            //scope.$root.model[thisObj.$parent.form.key[0]] = '';
+                            thisVal = '';
                             scope.$root.SetFieldValue(thisObj.$parent.form.key[0], '');
                           }
                         }
 
+
+                        if(thisObj.$parent.form.requiredGroup)
+                        {
+                          $timeout(function (){scope.$root.valueChanged(thisVal, thisObj.$parent.form, thisObj.$parent.form.requiredGroup);}, 700);
+                        }
+
+                      $timeout(function() {
                         unbindStreetWatch = scope.$watch(function(scope) { return scope.$root.model[streetParentKey] },
                           function(newValue, oldValue) {
                               if(newValue != oldValue)
                               {
                                 thisObj.searchStr = newValue;
-                                thisObj.$parent.form.hasError = false;
-                                thisObj.$parent.form.requiredError = false;
                               }
                           }
                          );
@@ -762,6 +743,7 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                   scope.$on(
                     'schemaForm.error.' + form.key.join('.'),
                     function(event, error, validationMessage, validity) {
+
                       if (validationMessage === true || validationMessage === false) {
                         validity = validationMessage;
                         validationMessage = undefined;
@@ -794,6 +776,26 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                         }
                       }
                   });
+
+                    // It looks better with dot notation.
+                    scope.$on(
+                      'schemaForm.setRequired.' + form.key.join('.'),
+                      function(event, isRequired, checkValidity) {
+
+                        form.required = isRequired;
+                        if (checkValidity === true) {
+                          // Setting or removing a validity can change the field to believe its valid
+                          // but its not. So lets trigger its validation as well.
+                          scope.$broadcast('schemaFormValidate');
+                        }
+                    });
+
+
+                    scope.$on(
+                      'schemaForm.validate.' + form.key.join('.'),
+                      function(event) {
+                          scope.$broadcast('schemaFormValidate');
+                    });
 
                   // Clean up the model when the corresponding form field is $destroy-ed.
                   // Default behavior can be supplied as a globalOption, and behavior can be overridden in the form definition.
@@ -2492,7 +2494,7 @@ angular.module('schemaForm').directive('schemaValidate', ['sfValidator', '$parse
             if (!form) {
               return viewValue;
             }
-            
+
             // Omit TV4 validation
             if (scope.options && scope.options.tv4Validation === false) {
               return viewValue;
@@ -2563,8 +2565,10 @@ angular.module('schemaForm').directive('schemaValidate', ['sfValidator', '$parse
           var schema = form.schema;
 
           // A bit ugly but useful.
-          scope.validateField =  function() {
+          scope.validateField =  function(setPristine) {
 
+            ngModel.$invalid = false;
+            ngModel.$valid = true;
             // Special case: arrays
             // TODO: Can this be generalized in a way that works consistently?
             // Just setting the viewValue isn't enough to trigger validation
@@ -2586,8 +2590,14 @@ angular.module('schemaForm').directive('schemaValidate', ['sfValidator', '$parse
 
               // In Angular 1.3 setting undefined as a viewValue does not trigger parsers
               // so we need to do a special required check. Fortunately we have $isEmpty
-              if (form.required && ngModel.$isEmpty(ngModel.$modelValue)) {
+
+              if(form.required && ngModel.$isEmpty(ngModel.$modelValue))
+              {
                 ngModel.$setValidity('tv4-302', false);
+              }
+              else {
+                ngModel.$setValidity('tv4-302', true);
+                ngModel.$setPristine();
               }
 
             } else {
@@ -2598,8 +2608,19 @@ angular.module('schemaForm').directive('schemaValidate', ['sfValidator', '$parse
             }
           }
 
+
+          scope.setRequiredField =  function(event, fieldList, isRequired) {
+            if(fieldList.indexOf(form.key[0]) != -1)
+            {
+              form.required = isRequired;
+            }
+          }
+
           // Listen to an event so we can validate the input on request
           scope.$on('schemaFormValidate', scope.validateField);
+
+          // Listen to an event so we can update required fields
+          scope.$on('schemaFormSetRequired', scope.setRequiredField);
 
           scope.schemaError = function() {
             return error;
