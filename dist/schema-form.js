@@ -460,18 +460,22 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                         }
                       }
 
-                      if(thisObj.$parent.form.requiredGroup)
-                      {
-                        $timeout(function (){scope.$root.valueChanged(thisVal, thisObj.$parent.form, thisObj.$parent.form.requiredGroup);}, 700);
-                      }
-
                       if(thisVal.length > 0 && thisVal.length < 5)
                       {
-                        $timeout(function (){scope.$broadcast('schemaForm.error.'+thisObj.$parent.form.key[0],'tv4-200',false);}, 1000);
+                        scope.$broadcast('schemaForm.error.'+thisObj.$parent.form.key[0],'tv4-200',false);
                       }
                       else
                       {
-                        $timeout(function (){scope.$broadcast('schemaForm.error.'+thisObj.$parent.form.key[0],'tv4-200',true);}, 1000);
+                        scope.$broadcast('schemaForm.error.'+thisObj.$parent.form.key[0],'tv4-200',true);
+                      }
+
+
+                      if(thisObj.$parent.form.requiredGroup)
+                      {
+                        scope.$root.valueChanged(thisVal, thisObj.$parent.form, thisObj.$parent.form.requiredGroup, true);
+                      }
+                      else {
+                        scope.$root.reDrawForm();
                       }
 
                       $timeout(function() {
@@ -552,7 +556,10 @@ angular.module('schemaForm').provider('schemaFormDecorators',
 
                         if(thisObj.$parent.form.requiredGroup)
                         {
-                          $timeout(function (){scope.$root.valueChanged(thisVal, thisObj.$parent.form, thisObj.$parent.form.requiredGroup);}, 700);
+                          scope.$root.valueChanged(thisVal, thisObj.$parent.form, thisObj.$parent.form.requiredGroup, true);
+                        }
+                        else {
+                          scope.$root.reDrawForm();
                         }
 
                       $timeout(function() {
@@ -783,7 +790,7 @@ angular.module('schemaForm').provider('schemaFormDecorators',
                       function(event, isRequired, checkValidity) {
 
                         form.required = isRequired;
-                        if (checkValidity === true) {
+                        if (checkValidity) {
                           // Setting or removing a validity can change the field to believe its valid
                           // but its not. So lets trigger its validation as well.
                           scope.$broadcast('schemaFormValidate');
